@@ -5,10 +5,14 @@ For this project, you will complete the following coding challenges. Each challe
 1. Ensure that you have Docker Desktop installed on your computer
 2. Ensure that you have venv installed globally
 3. From the top level directory of this project (where manage.py is located), type: 
+4. Ensure that you have postgres headers and pillow installed
+`sudo apt install postgresql postgresql-contrib libpq-dev libjpeg-dev zlib1g-dev`
+
     1. `docker compose --file docker-compose.dev.yml up -d`
     2. `chmod +x start.sh`
     3. `./start.sh`
     4. `source .venv/bin/activate`
+
 
 ## Setup (For Windows Powershell)
 1. Ensure that you have Docker Desktop installed on your computer

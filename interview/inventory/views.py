@@ -1,6 +1,8 @@
+from datetime import datetime
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.views import APIView
+from rest_framework import generics, status
 
 from interview.inventory.models import Inventory, InventoryLanguage, InventoryTag, InventoryType
 from interview.inventory.schemas import InventoryMetaData
@@ -219,3 +221,24 @@ class InventoryTypeRetrieveUpdateDestroyView(APIView):
     
     def get_queryset(self, **kwargs):
         return self.queryset.get(**kwargs)
+
+
+class InventoryCreatedAfterDateAPIView(generics.ListAPIView):
+    serializer_class = InventorySerializer
+
+    def get_queryset(self):
+        date_str = self.request.query_params.get('date', None)
+        if date_str:
+            try:
+                date = datetime.strptime(date_str, '%Y-%m-%d')
+                return Inventory.objects.filter(created_at__gt=date)
+            except ValueError:
+                return Inventory.objects.none()
+        return Inventory.objects.none()
+
+    def list(self, request):
+        queryset = self.get_queryset()
+        if not queryset:
+            return Response({"detail": "Invalid date format or no records found."}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
